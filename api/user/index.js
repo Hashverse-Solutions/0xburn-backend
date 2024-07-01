@@ -1,0 +1,14 @@
+'use strict';
+
+const express = require('express');
+const controller = require('./user.controller');
+const auth = require('../../auth/auth.service');
+
+
+const router = express.Router();
+
+/**************************        Login   ************************ */
+router.get('/getInvestersData', controller.getInvestersData);
+router.get('/setInvestersData', controller.setInvestersData);
+
+module.exports = router;
