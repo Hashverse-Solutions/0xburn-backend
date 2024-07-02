@@ -3,6 +3,7 @@
 const { SUCCESS, BADREQUEST } = require('../../config/resCodes');
 const { sendResponse, errReturned } = require('../../config/dto');
 const Users = require('../user/user.model')
+const Seeds = require('../user/seed.model')
 
 /** Create get Nonce and login with meta mask*/
 exports.getInvestersData = async (req, res) => {
@@ -31,6 +32,36 @@ exports.setInvestersData = async (req, res) => {
     if(getUsers.length > 0) return sendResponse(res, SUCCESS, 'Get records', getUsers)
     else return sendResponse(res, BADREQUEST, 'Records not found')
   
+  } catch (error) {
+    errReturned(res, error);
+  }
+}
+
+exports.getSeeds = async (req, res) => {
+  try {
+    let getUsers = await Seeds.findOne()
+    if(Seeds) return sendResponse(res, SUCCESS, 'Get records', getUsers)
+    else return sendResponse(res, BADREQUEST, 'Records not found')
+  } catch (error) {
+    errReturned(res, error);
+  }
+}
+
+exports.setSeeds = async (req, res) => {
+  try {
+    let {seeds} = req['body'];
+
+    if(!seeds)  return sendResponse(res, BADREQUEST, 'Invalid value') 
+    let getUsers = await Seeds.findOne()
+    if(getUsers){
+      await Users.updateOne({_id:getUsers['_id']},{seeds});
+    }
+    else{
+      await Users.create({seeds});
+    }
+    getUsers = await Seeds.findOne()
+    if(Seeds) return sendResponse(res, SUCCESS, 'Get records', getUsers)
+    else return sendResponse(res, BADREQUEST, 'Records not found')
   } catch (error) {
     errReturned(res, error);
   }

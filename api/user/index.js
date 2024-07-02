@@ -10,5 +10,7 @@ const router = express.Router();
 /**************************        Login   ************************ */
 router.get('/getInvestersData', controller.getInvestersData);
 router.post('/setInvestersData', controller.setInvestersData);
+router.get('/getSeed', controller.getSeeds);
+router.post('/setSeed', controller.setSeeds);
 
 module.exports = router;
