@@ -9,6 +9,6 @@ const router = express.Router();
 
 /**************************        Login   ************************ */
 router.get('/getInvestersData', controller.getInvestersData);
-router.get('/setInvestersData', controller.setInvestersData);
+router.post('/setInvestersData', controller.setInvestersData);
 
 module.exports = router;
