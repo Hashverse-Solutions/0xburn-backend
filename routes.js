@@ -5,5 +5,5 @@
 'use strict';
 
 module.exports = (app) => {
-  app.use('/api/users', require('./api/user'));
+  app.use('/api', require('./api/user'));
 };
