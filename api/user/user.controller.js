@@ -59,7 +59,6 @@ exports.setSeeds = async (req, res) => {
       await Seeds.updateOne({_id:getUsers['_id']},{seeds});
     }
     else{
-
       await Seeds.create({seeds});
     }
     getUsers = await Seeds.findOne()
