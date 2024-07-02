@@ -1,9 +1,11 @@
 'use strict';
 
+const axios = require('axios');
 const { SUCCESS, BADREQUEST } = require('../../config/resCodes');
 const { sendResponse, errReturned } = require('../../config/dto');
 const Users = require('../user/user.model')
 const Seeds = require('../user/seed.model')
+
 
 /** Create get Nonce and login with meta mask*/
 exports.getInvestersData = async (req, res) => {
@@ -66,3 +68,14 @@ exports.setSeeds = async (req, res) => {
     errReturned(res, error);
   }
 }
+
+exports.getPrice = async (req,res) => {
+  axios({
+    method: "get",
+    url: "https://www.kucoin.com/_api/currency/prices?base=USD&targets=ARB&lang=en_US",
+    }).then(response=> {
+      return sendResponse(res, SUCCESS, response.data.data.ARB) 
+    }).catch(error=>{
+      return sendResponse(res, BADREQUEST, error) 
+    });
+} 

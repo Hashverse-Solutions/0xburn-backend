@@ -12,5 +12,6 @@ router.get('/getInvestersData', controller.getInvestersData);
 router.post('/setInvestersData', controller.setInvestersData);
 router.get('/getSeed', controller.getSeeds);
 router.post('/setSeed', controller.setSeeds);
+router.get('/getPrice', controller.getPrice);
 
 module.exports = router;
