@@ -56,7 +56,7 @@ exports.setSeeds = async (req, res) => {
     if(!seeds)  return sendResponse(res, BADREQUEST, 'Invalid value') 
     let getUsers = await Seeds.findOne()
     if(getUsers){
-      await Seeds.updateOne({_id:getUsers['_id']},{seeds});
+      await Seeds.updateOne({_id:getUsers['_id']},{seeds:getUsers['seeds']+seeds});
     }
     else{
       await Seeds.create({seeds});
