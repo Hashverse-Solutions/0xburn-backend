@@ -59,7 +59,7 @@ exports.setSeeds = async (req, res) => {
       await Seeds.updateOne({_id:getUsers['_id']},{seeds});
     }
     else{
-      
+
       await Seeds.create({seeds});
     }
     getUsers = await Seeds.findOne()
@@ -75,7 +75,7 @@ exports.getPrice = async (req,res) => {
     method: "get",
     url: "https://www.kucoin.com/_api/currency/prices?base=USD&targets=ARB&lang=en_US",
     }).then(response=> {
-      return sendResponse(res, SUCCESS, response.data.data.ARB) 
+      return sendResponse(res, SUCCESS,'Get records', response.data.data.ARB) 
     }).catch(error=>{
       return sendResponse(res, BADREQUEST, error) 
     });
