@@ -48,17 +48,17 @@ exports.addOxBurnProposal = async (req, res) => {
 
     let docURL = "";
 
-    if (req.files?.proposalDocument) {
-      let docName = req.files?.proposalDocument?.name;
-      docName = docName?.split(".");
-      docName = docName?.[0];
-      docName = docName?.replace(/[^a-zA-Z0-9 ]/g, "");
-      docName = docName?.replace(/ /g, "-");
-      docName = docName?.toLowerCase() + daoAddress + proposalTitle;
-      let docType = req.files?.proposalDocument?.mimetype;
-      let docMime = req.files?.proposalDocument?.mimetype;
-      docType = docType?.split("/");
-      docType = docType?.[1];
+    if (req.files && req.files.proposalDocument) {
+      let docName = req.files.proposalDocument.name;
+      docName = docName.split(".");
+      docName = docName[0];
+      docName = docName.replace(/[^a-zA-Z0-9 ]/g, "");
+      docName = docName.replace(/ /g, "-");
+      docName = docName.toLowerCase() + daoAddress + proposalTitle;
+      let docType = req.files.proposalDocument.mimetype;
+      let docMime = req.files.proposalDocument.mimetype;
+      docType = docType.split("/");
+      docType = docType[1];
       if (docType !== undefined && docType !== null) {
         if (docType !== "pdf") {
           return errReturned(res, "Proposal document can only be of type PDF");
@@ -76,7 +76,7 @@ exports.addOxBurnProposal = async (req, res) => {
       proposalDescription,
       deadline,
       treasuryValue: treasuryValue ? treasuryValue : 0,
-      proposalDocument: req.files?.proposalDocument ? docURL : ""
+      proposalDocument: req.files && req.files?.proposalDocument ? docURL : ""
     }
 
     let result = await DAOModel.updateOne({ daoAddress }, { $push: { proposals: proposal } });
