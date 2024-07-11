@@ -68,7 +68,7 @@ exports.addOxBurnProposal = async (req, res) => {
       let bucketName = `${process['env']['DOCS_BUCKET']}`;
       docURL = `https://${process['env']['DOCS_BUCKET']}.s3.us-east-2.amazonaws.com/${docName}.${docType}`;
 
-      await helper.uploadFiles(docName, bucketName, docType, docMime, req.files?.proposalDocument);
+      await helper.uploadFiles(docName, bucketName, docType, docMime, req.files.proposalDocument);
     }
 
     let proposal = {
