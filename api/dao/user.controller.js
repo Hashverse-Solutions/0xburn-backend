@@ -76,7 +76,7 @@ exports.addOxBurnProposal = async (req, res) => {
       proposalDescription,
       deadline,
       treasuryValue: treasuryValue ? treasuryValue : 0,
-      proposalDocument: req.files && req.files?.proposalDocument ? docURL : ""
+      proposalDocument: req.files && req.files.proposalDocument ? docURL : ""
     }
 
     let result = await DAOModel.updateOne({ daoAddress }, { $push: { proposals: proposal } });
