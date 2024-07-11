@@ -5,12 +5,28 @@ const { SUCCESS, BADREQUEST } = require("../../config/resCodes");
 const { sendResponse, errReturned } = require("../../config/dto");
 
 
-//////////////////////////////////// CIFI DAO ////////////////////////////////////
+//////////////////////////////////// DAO ////////////////////////////////////
 
 exports.getOxBurnDAO = async (req, res) => {
   try {
-    let find = await DAOModel.find();
-    if (find) return sendResponse(res, SUCCESS, "CIFI DAO Found", find);
+    let data = req["body"];
+    let { daoAddress } = req["body"];
+    let required = ["daoAddress"];
+    for (let key of required)
+      if (
+        !data[key] ||
+        data[key] == "" ||
+        data[key] == undefined ||
+        data[key] == null
+      )
+        return errReturned(res, `Please provide ${key}`);
+
+    let find = await DAOModel.find({ daoAddress });
+    if (find) {
+      return sendResponse(res, SUCCESS, "DAO Found", find);
+    } else {
+      return sendResponse(res, SUCCESS, "No DAO Found!", []);
+    }
   } catch (error) {
     errReturned(res, error);
   }
@@ -19,7 +35,7 @@ exports.getOxBurnDAO = async (req, res) => {
 exports.addOxBurnProposal = async (req, res) => {
   try {
     let data = req["body"];
-    let { proposalTitle, proposalDescription, deadline, daoAddress } = req["body"];
+    let { proposalTitle, proposalDescription, deadline, treasuryValue, daoAddress } = req["body"];
     let required = ["daoAddress", "proposalTitle", "proposalDescription", "deadline"];
     for (let key of required)
       if (
@@ -49,8 +65,8 @@ exports.addOxBurnProposal = async (req, res) => {
         }
       }
 
-      let bucketName = `${process['env']['USER_ASSETS']}`;
-      docURL = `https://${process['env']['USER_ASSETS']}.s3.us-east-2.amazonaws.com/${docName}.${docType}`;
+      let bucketName = `${process['env']['DOCS_BUCKET']}`;
+      docURL = `https://${process['env']['DOCS_BUCKET']}.s3.us-east-2.amazonaws.com/${docName}.${docType}`;
 
       await helper.uploadFiles(docName, bucketName, docType, docMime, req.files?.proposalDocument);
     }
@@ -59,6 +75,7 @@ exports.addOxBurnProposal = async (req, res) => {
       proposalTitle,
       proposalDescription,
       deadline,
+      treasuryValue: treasuryValue ? treasuryValue : 0,
       proposalDocument: req.files?.proposalDocument ? docURL : ""
     }
 
@@ -84,7 +101,11 @@ exports.getOxBurnProposals = async (req, res) => {
         return errReturned(res, `Please provide ${key}`);
 
     let find = await DAOModel.find({ daoAddress });
-    if (find) return sendResponse(res, SUCCESS, "Proposals Found", find[0]['proposals']);
+    if (find) {
+      return sendResponse(res, SUCCESS, "Proposals Found", find[0]['proposals']);
+    } else {
+      return sendResponse(res, SUCCESS, "No proposals created yet!", []);
+    }
   } catch (error) {
     errReturned(res, error);
   }

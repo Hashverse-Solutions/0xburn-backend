@@ -16,4 +16,4 @@ let DAOSchema = new Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model('CIFIDAO', DAOSchema);
+module.exports = mongoose.model('DAO', DAOSchema);
