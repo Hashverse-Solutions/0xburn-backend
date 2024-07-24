@@ -6,9 +6,6 @@ var crypto = require('crypto');
 
 var UserSchema = new Schema({
   publicAddress: {type:String, lowercase:true},
-  tokenAddress: {type:String, lowercase:true},
-  investedAmount: { type: Number, default: 0 },
-  totalTokens: { type: Number, default: 0 },
   name: {type:String},
   email: {type:String, lowercase:true},
   phone: {type:String},
@@ -16,4 +13,4 @@ var UserSchema = new Schema({
   updatedAt: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model('patnerNFT', UserSchema);
