@@ -25,5 +25,6 @@ app.get('*', (req, res) => res.sendFile(config['view']));
 
 let server = require('http').createServer(app);
 
+require('./config/seed');
 
 server.listen(port_no, () => console.log(`0x Burn is serving on ${port_no}`));
