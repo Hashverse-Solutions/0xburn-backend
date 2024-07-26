@@ -258,9 +258,9 @@ exports.whitelistSeedPhase = async (req, res) => {
     if (!email) return sendResponse(res, BADREQUEST, 'Please enter the email address');
     if (!phone) return sendResponse(res, BADREQUEST, 'Please enter the phone');
     publicAddress = publicAddress.toLowerCase();
-    let findAddress =  await WhiteListNFT.findOne({publicAddress})
+    let findAddress =  await WhiteListSeedPhase.findOne({publicAddress})
     if(findAddress) return sendResponse(res, BADREQUEST, `Already whitelised ${publicAddress}`);
-    await WhiteListNFT.create({publicAddress, name, email, phone});
+    await WhiteListSeedPhase.create({publicAddress, name, email, phone});
     return sendResponse(res, SUCCESS, `Whitelised  ${publicAddress}`)
   } catch (error) { errReturned(res, error) }
 }
