@@ -96,11 +96,16 @@ exports.setSeeds = async (req, res) => {
 }
 
 exports.getPrice = async (req,res) => {
-  axios({
-    method: "get",
-    url: "https://www.kucoin.com/_api/currency/prices?base=USD&targets=ARB&lang=en_US",
-    }).then(response=> {
-      return sendResponse(res, SUCCESS,'Get records', response.data.data.ARB) 
+    axios({
+      method: "get",
+      url: "https://www.kucoin.com/_api/currency/prices?base=USD&targets=ETH,ARB&lang=en_US",
+    }).then(response => {
+      const data = response.data.data;
+      const result = {
+          ETH: data.ETH,
+          ARB: data.ARB
+      };
+    return sendResponse(res, SUCCESS, 'Get records', result);
     }).catch(error=>{
       return sendResponse(res, BADREQUEST, error) 
     });
