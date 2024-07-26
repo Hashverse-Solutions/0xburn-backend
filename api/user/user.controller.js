@@ -15,7 +15,7 @@ const PatnerNFT = require('../user/user.patner.nft.model')
 exports.getInvestersData = async (req, res) => {
   try {
 
-    let getUsers = await User.find()
+    let getUsers = await User.find({iswhitelist:true})
     if(getUsers.length > 0) return sendResponse(res, SUCCESS, 'Get records', getUsers)
     else return sendResponse(res, BADREQUEST, 'Records not found')
   } catch (error) {
