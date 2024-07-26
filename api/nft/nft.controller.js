@@ -148,7 +148,7 @@ exports.createCollections = async (req, res) => {
     let { publicAddress, _id, chain } = req['user'];
     let { background, profile } = req['files'];
     let data = req['body'];
-    let required = ['collectionType', 'collectionName', 'collectionDesc', 'collectionSymbol', 'tokenType', 'royality'];
+    let required = ['collectionType', 'collectionName', 'collectionDesc', 'collectionSymbol', 'tokenType', 'ownerAddress'];
     for (let key of required)
       if (!data[key] || data[key] == '' || data[key] == undefined || data[key] == null)
         return errReturned(res, `Please provide ${key}`);

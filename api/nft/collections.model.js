@@ -27,7 +27,7 @@ let Collections = new Schema({
   instagram: {type:String, default: null},
   medium: {type:String, default: null},
   telegram: {type:String, default: null},
-  royality: {type:Number, default: null},
+  ownerAddress: { type: String , lowercase: true},
 
   users: { type: Schema.Types.ObjectId, ref: "users" },
   createdAt: { type: Date, default: Date.now },
