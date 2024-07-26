@@ -8,15 +8,20 @@ const bodyParser = require('body-parser');
 const config = require('./config/environment');
 const database = require('./utils/connection');
 const port_no = process.env.PORT || 4000;
-const fileUpload = require('express-fileupload')
+// const fileUpload = require('express-fileupload')
 
 let app = express();
 app.use(cors());
 app.use(morgan('dev'));
 app.use(config['assets']);
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json({ limit: '5000mb', verify: function (req, res, buf, encoding) { req.rawBody = buf.toString() } }));
-app.use(fileUpload());
+app.use(bodyParser.json({ limit: '50mb', verify: function(req, res, buf, encoding) { req.rawBody = buf.toString() }}));
+// app.use(cors());
+// app.use(morgan('dev'));
+// app.use(config['assets']);
+// app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.json({ limit: '5000mb', verify: function (req, res, buf, encoding) { req.rawBody = buf.toString() } }));
+// app.use(fileUpload());
 
 database.getConnection();
 require('./routes')(app);

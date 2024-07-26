@@ -136,7 +136,7 @@ exports.mintNft1155 = async (req, res) => {
 exports.getSingleNft = async (req, res) => {
   try {
     let { _id } = req['params'];
-    let findCollection = await nftModel.findOne({ _id }).populate("users");
+    let findCollection = await nftModel.findOne({ _id }).populate("user");
     if (findCollection) return sendResponse(res, SUCCESS, 'NFT Found', findCollection);
     return sendResponse(res, BADREQUEST, 'NFT Not Found', []);
   } catch (error) { errReturned(res, error); }
@@ -156,7 +156,7 @@ exports.createCollections = async (req, res) => {
     let now = Date.now();
     await collectionsModels.create({ ...data, profileImage: profile[0]['location'], bgImage: background[0]['location'], users: _id, publicAddress });
     await activityModel.create({ chain,collectionName:data['collectionName'],collectionImage:profile[0]['location'], type: data['tokenType'], address: publicAddress, user: _id, collectionAddress:data['tokenAddress'], status: "Create Collection",isCollection:true, createdAt: now });
-    let findCollections = await collectionsModels.find({ $and: [{ publicAddress }, { users: _id }] }).populate("users")
+    let findCollections = await collectionsModels.find({ $and: [{ publicAddress }, { users: _id }] }).populate("user")
     return sendResponse(res, SUCCESS, 'Collection Created', findCollections);
   } catch (error) { errReturned(res, error); }
 }
@@ -165,7 +165,7 @@ exports.createCollections = async (req, res) => {
 exports.getUserCollections = async (req, res) => {
   try {
     let { publicAddress, _id, chain } = req['user'];
-    let findCollections = await collectionsModels.find({ $and: [{ publicAddress }, { users: _id }, { chain }] }).populate("users")
+    let findCollections = await collectionsModels.find({ $and: [{ publicAddress }, { users: _id }, { chain }] }).populate("user")
     if (findCollections) return sendResponse(res, SUCCESS, 'Collection Found', findCollections);
     return sendResponse(res, BADREQUEST, 'Collection Not Found', []);
   } catch (error) { errReturned(res, error); }
@@ -176,7 +176,7 @@ exports.getSingleCollection = async (req, res) => {
   try {
     let { tokenAddress, chain } = req['params'];
     tokenAddress = tokenAddress.toLowerCase();
-    let findCollections = await collectionsModels.findOne({ $and: [{ tokenAddress }, { chain }] }).populate("users")
+    let findCollections = await collectionsModels.findOne({ $and: [{ tokenAddress }, { chain }] }).populate("user")
     if (findCollections) return sendResponse(res, SUCCESS, 'Collection Found', findCollections);
     return sendResponse(res, BADREQUEST, 'Collection Not Found', []);
   } catch (error) { errReturned(res, error); }
@@ -187,8 +187,9 @@ exports.getCollectionDetails = async (req, res) => {
   try {
     let { tokenAddress, chain } = req['params'];
     tokenAddress = tokenAddress.toLowerCase();
-    let collectionDetail = await collectionsModels.findOne({ $and: [{ tokenAddress }, { chain }] }).populate("users");
-    let nfts = await nftModel.find({ $and: [{ tokenAddress }, { chain }] }).populate("users")
+    let collectionDetail = await collectionsModels.findOne({ $and: [{ tokenAddress }, { chain }] }).populate("user");
+    console.log(collectionDetail)
+    let nfts = await nftModel.find({ $and: [{ tokenAddress }, { chain }] }).populate("user")
     if (collectionDetail || nfts.length > 0) {
       return sendResponse(res, SUCCESS, 'Collection Found', { nfts, collectionDetail });
     }
@@ -200,7 +201,7 @@ exports.getCollectionDetails = async (req, res) => {
 exports.getUserNft = async (req, res) => {
   let { publicAddress, _id, chain } = req['user'];
   publicAddress = publicAddress.toLowerCase();
-  let nfts = await nftModel.find({ $and: [{ users: _id }, { chain }] }).populate("users")
+  let nfts = await nftModel.find({ $and: [{ users: _id }, { chain }] }).populate("user")
   if (nfts.length > 0) {
     return sendResponse(res, SUCCESS, 'NFT Found', nfts);
   }
@@ -214,7 +215,7 @@ exports.explore = async (req, res) => {
     // Get the filter criteria from the query parameters (assuming frontend sends data in query parameters)
     const {chain} = req['params'];
     // Query the database with the filter criteria
-    let nfts = await nftModel.find({chain}).populate("users").populate("collections");
+    let nfts = await nftModel.find({chain}).populate("user").populate("collections");
     if (nfts.length > 0){
       let newArray = []
       for (let index = 0; index < nfts.length; index++) {
@@ -234,7 +235,7 @@ exports.explore = async (req, res) => {
 exports.getCollectionName = async (req, res) => {
   try {
     let {chain} = req['params']
-    let collectionDetail = await collectionsModels.find({$and:[{chain},{isMarketplaceCollection:false}]}).populate("users");
+    let collectionDetail = await collectionsModels.find({$and:[{chain},{isMarketplaceCollection:false}]}).populate("user");
     if (collectionDetail) {
       return sendResponse(res, SUCCESS, 'Collection Found', collectionDetail);
     }
@@ -283,7 +284,7 @@ exports.getFavItems = async (req, res) => {
 exports.getDetailNft = async (req, res) => {
   try {
     let { id } = req['params'];
-    let getNFT = await nftModel.findOne({ _id: id }).populate("bids").populate("users").populate("collections");
+    let getNFT = await nftModel.findOne({ _id: id }).populate("bids").populate("user").populate("collections");
     if (getNFT) return sendResponse(res, SUCCESS, 'NFT Found', getNFT);
     return sendResponse(res, BADREQUEST, 'NFT Not Found');
   } catch (error) { errReturned(res, error); }
@@ -295,17 +296,17 @@ exports.listNft = async (req, res) => {
     let { nftObjId, price, listAmount } = req['body'];
     let { _id } = req['user'];
     let now = Date.now();
-    let getNFT = await nftModel.findOne({ $and: [{ _id: nftObjId }, { users: _id }] }).populate("users");
+    let getNFT = await nftModel.findOne({ $and: [{ _id: nftObjId }, { users: _id }] }).populate("user");
     if (getNFT) {
       if (getNFT['tokenType'] == "erc721") {
         await nftModel.updateOne({ _id: nftObjId }, { price, isMarketItem: true, status: "buy" });
-        getNFT = await nftModel.findOne({ _id: nftObjId }).populate("bids").populate("users").populate("collections");
+        getNFT = await nftModel.findOne({ _id: nftObjId }).populate("bids").populate("user").populate("collections");
         await activityModel.create({ chain: getNFT['chain'], type: getNFT['tokenType'], address: getNFT['users']['publicAddress'], user: _id, nft: nftObjId, status: "list", createdAt: now });
         return sendResponse(res, SUCCESS, 'List NFT Successfully', getNFT);
       }
       else if (getNFT['tokenType'] == "erc1155") {
         await nftModel.updateOne({ _id: nftObjId }, { price, listAmount, isMarketItem: true, status: "buy" });
-        getNFT = await nftModel.findOne({ _id: nftObjId }).populate("bids").populate("users").populate("collections");
+        getNFT = await nftModel.findOne({ _id: nftObjId }).populate("bids").populate("user").populate("collections");
         await activityModel.create({ chain: getNFT['chain'], type: getNFT['tokenType'], address: getNFT['users']['publicAddress'], user: _id, nft: nftObjId, status: "list", createdAt: now });
         return sendResponse(res, SUCCESS, 'List NFT Successfully', getNFT);
       }
@@ -320,17 +321,17 @@ exports.unListNft = async (req, res) => {
     let { nftObjId } = req['body'];
     let { _id } = req['user'];
     let now = Date.now();
-    let getNFT = await nftModel.findOne({ $and: [{ _id: nftObjId }, { users: _id }] }).populate("users");
+    let getNFT = await nftModel.findOne({ $and: [{ _id: nftObjId }, { users: _id }] }).populate("user");
     if (getNFT) {
       if (getNFT['tokenType'] == "erc721") {
         await nftModel.updateOne({ _id: nftObjId }, { isMarketItem: false });
-        getNFT = await nftModel.findOne({ _id: nftObjId }).populate("bids").populate("users").populate("collections");
+        getNFT = await nftModel.findOne({ _id: nftObjId }).populate("bids").populate("user").populate("collections");
         await activityModel.create({ chain: getNFT['chain'], type: getNFT['tokenType'], address: getNFT['users']['publicAddress'], user: _id, nft: nftObjId, status: "unlist", createdAt: now });
         return sendResponse(res, SUCCESS, 'Unlist NFT Successfully', getNFT);
       }
       else if (getNFT['tokenType'] == "erc1155") {
         await nftModel.updateOne({ _id: nftObjId }, { listAmount: 0, isMarketItem: false });
-        getNFT = await nftModel.findOne({ _id: nftObjId }).populate("bids").populate("users").populate("collections");
+        getNFT = await nftModel.findOne({ _id: nftObjId }).populate("bids").populate("user").populate("collections");
         await activityModel.create({ chain: getNFT['chain'], type: getNFT['tokenType'], address: getNFT['users']['publicAddress'], user: _id, nft: nftObjId, status: "unlist", createdAt: now });
         return sendResponse(res, SUCCESS, 'Unlist NFT Successfully', getNFT);
       }
@@ -348,7 +349,7 @@ exports.createAuction = async (req, res) => {
     let getNFT = await nftModel.findOne({ $and: [{ _id: nftObjId }, { users: _id }] });
     if (!getNFT) return sendResponse(res, BADREQUEST, 'NFT Not Found');
     await nftModel.updateOne({ _id: nftObjId }, { price, bidAmount, bidTime, isMarketItem: true, status: "auction", startTime });
-    getNFT = await nftModel.findOne({ _id: nftObjId }).populate("bids").populate("users").populate("collections");
+    getNFT = await nftModel.findOne({ _id: nftObjId }).populate("bids").populate("user").populate("collections");
     await activityModel.create({ chain: getNFT['chain'], type: getNFT['tokenType'], address: getNFT['users']['publicAddress'], user: _id, nft: nftObjId, status: "auction", createdAt: now });
     return sendResponse(res, SUCCESS, 'Create Auction Successfully', getNFT);
   } catch (error) { errReturned(res, error); }
@@ -367,7 +368,7 @@ exports.placeBid = async (req, res) => {
     let bidder = await bidsModel.create({ bidderAddress, nftObjId, chain, price, tokenAddress: getNFT['tokenAddress'], bidAmount: getNFT['bidAmount'], tokenId: getNFT['nftId'], userId: _id, users: _id, nft: nftObjId })
     if (getNFT['totalBids'] !== 0) totalBids = parseInt(totalBids + getNFT['totalBids']);
     await nftModel.updateOne({ _id: nftObjId }, { price, bids: bidder['_id'], totalBids, bidder: bidderAddress });
-    getNFT = await nftModel.findOne({ _id: nftObjId }).populate("bids").populate("users").populate("collections");
+    getNFT = await nftModel.findOne({ _id: nftObjId }).populate("bids").populate("user").populate("collections");
     await activityModel.create({ chain: getNFT['chain'], type: getNFT['tokenType'], address: bidderAddress, user: _id, nft: nftObjId, status: "bid", createdAt: now });
     return sendResponse(res, SUCCESS, 'Bid Successfully', getNFT);
   } catch (error) { errReturned(res, error); }
@@ -403,7 +404,7 @@ exports.getBids = async (req, res) => {
   try {
     let { nftObjId } = req['body'];
     let { chain } = req['user'];
-    let getBids = await bidsModel.find({ $and: [{ chain }, { nftObjId }] }).populate("users");
+    let getBids = await bidsModel.find({ $and: [{ chain }, { nftObjId }] }).populate("user");
     if (getBids.length > 0) return sendResponse(res, SUCCESS, 'Bids Found', getBids);
     return sendResponse(res, BADREQUEST, 'Bids Not Found');
   } catch (error) { errReturned(res, error); }
@@ -413,7 +414,7 @@ exports.getBids = async (req, res) => {
 exports.getAuctions = async (req, res) => {
   try {
     let { chain } = req['params'];
-    let getNFTs = await nftModel.find({ $and: [{ chain }, { status: "auction" }, { isMarketItem: true }] }).populate("users").populate("collections");
+    let getNFTs = await nftModel.find({ $and: [{ chain }, { status: "auction" }, { isMarketItem: true }] }).populate("user").populate("collections");
     if (getNFTs.length > 0){
       let newIds = [];
       for (let index = 0; index < getNFTs.length; index++) {
@@ -431,7 +432,7 @@ exports.getAuctions = async (req, res) => {
 exports.getAllNfts = async (req, res) => {
   try {
     let { chain } = req['params'];
-    let getNFTs = await nftModel.find({ $and: [{ chain }, { isMarketItem: true }] }).populate("users").populate("collections");
+    let getNFTs = await nftModel.find({ $and: [{ chain }, { isMarketItem: true }] }).populate("user").populate("collections");
     if (getNFTs.length > 0){
       let newIds = [];
       for (let index = 0; index < getNFTs.length; index++) {
@@ -449,7 +450,7 @@ exports.getAllNfts = async (req, res) => {
 exports.getAllCollections = async (req, res) => {
   try {
     let { chain } = req['params'];
-    let getNFTs = await collectionsModels.find({ $and: [{ chain }, { isMarketplaceCollection: false }] }).populate("users").populate("collections");
+    let getNFTs = await collectionsModels.find({ $and: [{ chain }, { isMarketplaceCollection: false }] }).populate("user").populate("collections");
     if(getNFTs.length > 0)  return sendResponse(res, SUCCESS, 'Collection Found', getNFTs);
     return sendResponse(res, BADREQUEST, 'Collection Not Found');
   } catch (error) { errReturned(res, error); }
@@ -461,18 +462,18 @@ exports.endAuction = async (req, res) => {
     let { nftObjId } = req['body'];
     let { _id } = req['user'];
     let now = Date.now();
-    let getNFT = await nftModel.findOne({ _id: nftObjId }).populate("bids").populate("users");
+    let getNFT = await nftModel.findOne({ _id: nftObjId }).populate("bids").populate("user");
     if (getNFT['tokenType'] == "erc721") {
       if (!getNFT['bids']) {
         await nftModel.updateOne({ _id: nftObjId }, { bidAmount: 0, bidTime: 0, bidder: null, bids: null, totalBids: 0, isMarketItem: false, status: "buy" });
         await bidsModel.deleteMany({ $and: [{ chain: getNFT['chain'] }, { tokenAddress: getNFT['tokenAddress'] }, { nftObjId }] });
-        getNFT = await nftModel.findOne({ _id: nftObjId }).populate("bids").populate("users").populate("collections");
+        getNFT = await nftModel.findOne({ _id: nftObjId }).populate("bids").populate("user").populate("collections");
         await activityModel.create({ chain: getNFT['chain'], type: getNFT['tokenType'], address: getNFT['users']['publicAddress'], user: _id, nft: nftObjId, status: "transfer", createdAt: now });
         return sendResponse(res, SUCCESS, 'Auction Ended Successfully', getNFT);
       } else {
         await nftModel.updateOne({ _id: nftObjId }, { users: getNFT['bids']['userId'], bidAmount: 0, bidTime: 0, bidder: null, bids: null, totalBids: 0, isMarketItem: false, status: "buy" });
         await bidsModel.deleteMany({ $and: [{ chain: getNFT['chain'] }, { tokenAddress: getNFT['tokenAddress'] }, { nftObjId }] });
-        getNFT = await nftModel.findOne({ _id: nftObjId }).populate("bids").populate("users").populate("collections");
+        getNFT = await nftModel.findOne({ _id: nftObjId }).populate("bids").populate("user").populate("collections");
         await activityModel.create({ chain: getNFT['chain'], type: getNFT['tokenType'], address: getNFT['users']['publicAddress'], user: _id, nft: nftObjId, status: "transfer", createdAt: now });
         return sendResponse(res, SUCCESS, 'Auction Ended Successfully', getNFT);
       }
@@ -515,7 +516,7 @@ exports.endAuction = async (req, res) => {
           await bidsModel.deleteMany({ $and: [{ chain: getNFT['chain'] }, { tokenAddress: getNFT['tokenAddress'] }, { nftObjId }] });
         }
       }
-      getNFT = await nftModel.findOne({ _id: nftObjId }).populate("bids").populate("users").populate("collections");
+      getNFT = await nftModel.findOne({ _id: nftObjId }).populate("bids").populate("user").populate("collections");
       await activityModel.create({ chain: getNFT['chain'], type: getNFT['tokenType'], address: getNFT['users']['publicAddress'], user: _id, nft: nftObjId, status: "transfer", createdAt: now });
       return sendResponse(res, SUCCESS, 'Auction Ended Successfully', getNFT);
     }
@@ -536,7 +537,7 @@ exports.transferNft = async (req, res) => {
     if (getUser) {
       if (getNFT['tokenType'] == "erc721") {
         await nftModel.updateOne({ _id: nftObjId }, { users: getUser['_id'], isMarketItem: false, status: "buy" });
-        getNFT = await nftModel.findOne({ _id: nftObjId }).populate("bids").populate("users").populate("collections");
+        getNFT = await nftModel.findOne({ _id: nftObjId }).populate("bids").populate("user").populate("collections");
         await activityModel.create({ chain: getNFT['chain'], type: getNFT['tokenType'], address: getNFT['users']['publicAddress'], user: _id, nft: nftObjId, status: "transfer", createdAt: now });
         return sendResponse(res, SUCCESS, 'Transfer NFT Successfully', getNFT);
       }
@@ -554,7 +555,7 @@ exports.transferNft = async (req, res) => {
           await nftModel.create({ ...newNFT });
           await nftModel.updateOne({ _id: nftObjId }, { mintAmount: remaningAmount, isMarketItem: false, listAmount: 0, status: "buy" });
         }
-        getNFT = await nftModel.findOne({ _id: nftObjId }).populate("bids").populate("users").populate("collections");
+        getNFT = await nftModel.findOne({ _id: nftObjId }).populate("bids").populate("user").populate("collections");
         await activityModel.create({ chain: getNFT['chain'], type: getNFT['tokenType'], address: getNFT['users']['publicAddress'], user: _id, nft: nftObjId, status: "transfer", createdAt: now });
         return sendResponse(res, SUCCESS, 'Transfer NFT Successfully', getNFT);
       }
@@ -563,7 +564,7 @@ exports.transferNft = async (req, res) => {
       let createUser = await usersModels.create({ nonce, publicAddress: receiverAddress, chain: getNFT['chain'] });
       if (getNFT['tokenType'] == "erc721") {
         await nftModel.updateOne({ _id: nftObjId }, { users: createUser['_id'], isMarketItem: false });
-        getNFT = await nftModel.findOne({ _id: nftObjId }).populate("bids").populate("users").populate("collections");
+        getNFT = await nftModel.findOne({ _id: nftObjId }).populate("bids").populate("user").populate("collections");
         await activityModel.create({ chain: getNFT['chain'], type: getNFT['tokenType'], address: getNFT['users']['publicAddress'], user: _id, nft: nftObjId, status: "transfer", createdAt: now });
         return sendResponse(res, SUCCESS, 'Transfer NFT Successfully', getNFT);
       } else if (getNFT['tokenType'] == "erc1155") {
@@ -581,7 +582,7 @@ exports.transferNft = async (req, res) => {
           await nftModel.updateOne({ _id: nftObjId }, { mintAmount: remaningAmount, isMarketItem: false, listAmount: 0, status: "buy" });
         }
       }
-      getNFT = await nftModel.findOne({ _id: nftObjId }).populate("bids").populate("users").populate("collections");
+      getNFT = await nftModel.findOne({ _id: nftObjId }).populate("bids").populate("user").populate("collections");
       await activityModel.create({ chain: getNFT['chain'], type: getNFT['tokenType'], address: getNFT['users']['publicAddress'], user: _id, nft: nftObjId, status: "transfer", createdAt: now });
       return sendResponse(res, SUCCESS, 'Transfer NFT Successfully', getNFT);
     }

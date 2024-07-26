@@ -29,7 +29,7 @@ let Collections = new Schema({
   telegram: {type:String, default: null},
   ownerAddress: { type: String , lowercase: true},
 
-  users: { type: Schema.Types.ObjectId, ref: "users" },
+  user: { type: Schema.Types.ObjectId, ref: "users" },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
