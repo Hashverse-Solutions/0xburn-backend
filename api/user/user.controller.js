@@ -34,7 +34,7 @@ exports.setInvestersData = async (req, res) => {
     if(!email)  return sendResponse(res, BADREQUEST, 'Invalid email') 
     if(!phone)  return sendResponse(res, BADREQUEST, 'Invalid phone') 
     
-    await User.create({publicAddress,tokenAddress,investedAmount,totalTokens, name, email, phone});
+    await User.create({publicAddress,tokenAddress,investedAmount,totalTokens, name, email, phone, iswhitelist:true});
     
     let getUsers = await User.find()
     if(getUsers.length > 0) return sendResponse(res, SUCCESS, 'Get records', getUsers)
