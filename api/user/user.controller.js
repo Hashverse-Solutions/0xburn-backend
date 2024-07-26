@@ -9,6 +9,8 @@ const helper = require('../nft/helper');
 const User = require('../user/user.model')
 const Seeds = require('../user/seed.model')
 const PatnerNFT = require('../user/user.patner.nft.model')
+const WhiteListNFT = require('../user/whitelist.model.patnernft')
+const WhiteListSeedPhase = require('../user/whitelist.model.seedphase')
 
 
 /** Create get Nonce and login with meta mask*/
@@ -228,4 +230,35 @@ function loginNotification(req, user) {
     await User.updateOne({ _id: user['_id'] }, { $set: { nonce } }).exec();
     return resolve({ token });
   });
+}
+
+
+/** Get User Data */
+exports.whitelistNFT = async (req, res) => {
+  try {
+    let {publicAddress, name, email, phone} = req['body'];
+    if (!publicAddress) return sendResponse(res, BADREQUEST, 'Please enter wallet address');
+    if (!name) return sendResponse(res, BADREQUEST, 'Please enter the name');
+    if (!email) return sendResponse(res, BADREQUEST, 'Please enter the email address');
+    if (!phone) return sendResponse(res, BADREQUEST, 'Please enter the phone');
+    publicAddress = publicAddress.toLowerCase();
+    if(publicAddress) return sendResponse(res, BADREQUEST, `Already whitelised on this address ${publicAddress}`);
+    await WhiteListNFT.create({publicAddress, name, email, phone});
+    return sendResponse(res, SUCCESS, `Whitelised on this address ${publicAddress}`)
+  } catch (error) { errReturned(res, error) }
+}
+
+/** Get User Data */
+exports.whitelistSeedPhase = async (req, res) => {
+  try {
+    let {publicAddress, name, email, phone} = req['body'];
+    if (!publicAddress) return sendResponse(res, BADREQUEST, 'Please enter wallet address');
+    if (!name) return sendResponse(res, BADREQUEST, 'Please enter the name');
+    if (!email) return sendResponse(res, BADREQUEST, 'Please enter the email address');
+    if (!phone) return sendResponse(res, BADREQUEST, 'Please enter the phone');
+    publicAddress = publicAddress.toLowerCase();
+    if(publicAddress) return sendResponse(res, BADREQUEST, `Already whitelised on this address ${publicAddress}`);
+    await WhiteListNFT.create({publicAddress, name, email, phone});
+    return sendResponse(res, SUCCESS, `Whitelised on this address ${publicAddress}`)
+  } catch (error) { errReturned(res, error) }
 }

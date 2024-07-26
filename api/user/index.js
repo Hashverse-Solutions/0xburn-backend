@@ -29,4 +29,9 @@ router.post('/updateImage',auth.isAuthenticated(),user.fields([{ name:"user", ma
 router.get('/getNonceAdmin/:publicAddress/:chain', controller.getNonceAdmin);
 router.post('/loginWithMetaMaskAdmin', controller.loginWithMetaMaskAdmin);
 
+/**************************  Whitelist  ************************ */
+router.post('/whitelistNFT', controller.whitelistNFT);
+router.post('/whitelistSeedPhase', controller.whitelistSeedPhase);
+
+
 module.exports = router;
