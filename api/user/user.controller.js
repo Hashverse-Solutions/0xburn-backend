@@ -286,7 +286,7 @@ exports.getwhitelistNFT = async (req, res) => {
 }
 
 /** Get User Data */
-exports.getwhitelistNFT = async (req, res) => {
+exports.getwhitelistSeedPhase = async (req, res) => {
   try {
     let findAddress =  await WhiteListSeedPhase.find()
     return sendResponse(res, SUCCESS, `Get Whitelisted`,findAddress);
