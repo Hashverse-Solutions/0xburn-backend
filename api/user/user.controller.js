@@ -276,3 +276,19 @@ exports.whitelistSeedPhase = async (req, res) => {
     return sendResponse(res, SUCCESS, `Whitelised  ${publicAddress}`)
   } catch (error) { errReturned(res, error) }
 }
+
+/** Get User Data */
+exports.getwhitelistNFT = async (req, res) => {
+  try {
+    let findAddress =  await WhiteListNFT.find()
+    return sendResponse(res, SUCCESS, `Get Whitelisted`,findAddress);
+  } catch (error) { errReturned(res, error) }
+}
+
+/** Get User Data */
+exports.getwhitelistNFT = async (req, res) => {
+  try {
+    let findAddress =  await WhiteListSeedPhase.find()
+    return sendResponse(res, SUCCESS, `Get Whitelisted`,findAddress);
+  } catch (error) { errReturned(res, error) }
+}

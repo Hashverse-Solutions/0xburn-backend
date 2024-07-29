@@ -33,5 +33,8 @@ router.post('/loginWithMetaMaskAdmin', controller.loginWithMetaMaskAdmin);
 router.post('/whitelistNFT', controller.whitelistNFT);
 router.post('/whitelistSeedPhase', controller.whitelistSeedPhase);
 
+router.get('/getwhitelistNFT', controller.getwhitelistNFT);
+router.get('/getwhitelistSeedPhase', controller.getwhitelistSeedPhase);
+
 
 module.exports = router;
