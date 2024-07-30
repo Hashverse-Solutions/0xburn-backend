@@ -11,6 +11,7 @@ let NFTSchema = new Schema({
   isMarketItem: { type: Boolean, default: false },
   isMarketplaceNFT: { type: Boolean, default: false },
   isApproved: { type: Boolean, default: false },
+  isRequired0xBurn:{ type: Boolean, default: false },
   publicAddress: { type: String, lowercase: true },
   tokenAddress: { type: String, lowercase: true },
   owner: { type: String, lowercase: true },
