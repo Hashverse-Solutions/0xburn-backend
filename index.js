@@ -15,7 +15,7 @@ app.use(cors());
 app.use(morgan('dev'));
 app.use(config['assets']);
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json({ limit: '1000mb', verify: function(req, res, buf, encoding) { req.rawBody = buf.toString() }}));
+app.use(bodyParser.json({ limit: '50mb', verify: function(req, res, buf, encoding) { req.rawBody = buf.toString() }}));
 // app.use(cors());
 // app.use(morgan('dev'));
 // app.use(config['assets']);
