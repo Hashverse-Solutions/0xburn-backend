@@ -2,6 +2,7 @@
 
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
+const uplaodFIles = require("../dao/helper")
 const { SUCCESS, BADREQUEST } = require('../../config/resCodes');
 const { sendResponse, errReturned } = require('../../config/dto');
 const web3Provider = require("../../utils/web3");
@@ -217,7 +218,9 @@ exports.setUserImage = async (req, res) => {
   try {
     let { _id } = req['user'];
     let { user } = req['files'];
-      await User.updateOne({_id},{image:user[0]['location']});
+     let backgroundName = "user/"+ Math.floor((Math.random() * 10000000000) + 20) + '-' + Math.floor(Date.now() / 1000)+background['name'].split(".")[0]
+     let uploadBackground = await uplaodFIles.uploadFileNFT(backgroundName,process['env']['bucket'],background['name'].split(".")[1],background['mimetype'], background['data']);
+      await User.updateOne({_id},{image:uploadBackground});
       return sendResponse(res, SUCCESS, `Update Profile Image`)
   } catch (error) { errReturned(res, error) }
 }

@@ -22,7 +22,8 @@ router.get('/getNonce/:publicAddress/:chain', controller.getNonce);
 router.post('/loginWithMetaMask', controller.loginWithMetaMask);
 router.get('/getUser',auth.isAuthenticated(), controller.getUser);
 router.post('/setUser',auth.isAuthenticated(), controller.setUser);
-router.post('/updateImage',auth.isAuthenticated(),user.fields([{ name:"user", maxCount:1 }]),controller.setUserImage);
+router.post('/updateImage',auth.isAuthenticated(),controller.setUserImage);
+// router.post('/updateImage',auth.isAuthenticated(),user.fields([{ name:"user", maxCount:1 }]),controller.setUserImage);
 // router.post('/updateImage',auth.isAuthenticated(),user.fields([{ name:"user", maxCount:1 }]),controller.setUserImage);
 
 /**************************  Admin Login  ************************ */

@@ -1,5 +1,6 @@
 'use strict';
 const helper = require("./helper");
+const uplaodFIles = require("../dao/helper")
 const favModel = require('./fav.model');
 const nftModel = require('./nft.model');
 const bidsModel = require('./bids.model');
@@ -147,15 +148,20 @@ exports.createCollections = async (req, res) => {
   try {
     let { publicAddress, _id, chain } = req['user'];
     let { background, profile } = req['files'];
-    let data = req['body'];
+   let data = req['body'];
     let required = ['collectionType', 'collectionName', 'collectionDesc', 'collectionSymbol', 'tokenType', 'ownerAddress'];
     for (let key of required)
       if (!data[key] || data[key] == '' || data[key] == undefined || data[key] == null)
         return errReturned(res, `Please provide ${key}`);
 
+    let profileName = "profile/"+ Math.floor((Math.random() * 10000000000) + 20) + '-' + Math.floor(Date.now() / 1000)+profile['name'].split(".")[0]
+    let backgroundName = "background/"+ Math.floor((Math.random() * 10000000000) + 20) + '-' + Math.floor(Date.now() / 1000)+background['name'].split(".")[0]
+    let uploadProfile = await uplaodFIles.uploadFileNFT(profileName,process['env']['bucket'],profile['name'].split(".")[1],profile['mimetype'], profile['data']);
+    let uploadBackground = await uplaodFIles.uploadFileNFT(backgroundName,process['env']['bucket'],background['name'].split(".")[1],background['mimetype'], background['data']);
+    
     let now = Date.now();
-    await collectionsModels.create({ ...data, profileImage: profile[0]['location'], bgImage: background[0]['location'], users: _id, publicAddress });
-    await activityModel.create({ chain,collectionName:data['collectionName'],collectionImage:profile[0]['location'], type: data['tokenType'], address: publicAddress, user: _id, collectionAddress:data['tokenAddress'], status: "Create Collection",isCollection:true, createdAt: now });
+    await collectionsModels.create({ ...data, profileImage: uploadProfile, bgImage: uploadBackground, users: _id, publicAddress });
+    await activityModel.create({ chain,collectionName:data['collectionName'],collectionImage:uploadProfile, type: data['tokenType'], address: publicAddress, user: _id, collectionAddress:data['tokenAddress'], status: "Create Collection",isCollection:true, createdAt: now });
     let findCollections = await collectionsModels.find({ $and: [{ publicAddress }, { users: _id }] }).populate("users")
     return sendResponse(res, SUCCESS, 'Collection Created', findCollections);
   } catch (error) { errReturned(res, error); }
@@ -601,11 +607,16 @@ exports.updateLogo = async (req, res) => {
       if (!data[key] || data[key] == '' || data[key] == undefined || data[key] == null)
         return errReturned(res, `Please provide ${key}`);
     
+    let profileName = "profile/"+ Math.floor((Math.random() * 10000000000) + 20) + '-' + Math.floor(Date.now() / 1000)+profile['name'].split(".")[0]
+    // let backgroundName = "background/"+ Math.floor((Math.random() * 10000000000) + 20) + '-' + Math.floor(Date.now() / 1000)+background['name'].split(".")[0]
+    let uploadProfile = await uplaodFIles.uploadFileNFT(profileName,process['env']['bucket'],profile['name'].split(".")[1],profile['mimetype'], profile['data']);
+    // let uploadBackground = await uplaodFIles.uploadFileNFT(backgroundName,process['env']['bucket'],background['name'].split(".")[1],background['mimetype'], background['data']);
+    
     tokenAddress = tokenAddress.toLowerCase();
     let findCollection = await collectionsModels.findOne({$and:[{tokenAddress},{chain}]});
     if(findCollection) {
       await uploadFiles.deleteCollection(findCollection['profileImage']);
-      await collectionsModels.updateOne({ _id:findCollection['_id'] }, { profileImage: profile[0]['location'] });
+      await collectionsModels.updateOne({ _id:findCollection['_id'] }, { profileImage: uploadProfile });
       return sendResponse(res, SUCCESS, `Updated Logo`)
     }
     return sendResponse(res, BADREQUEST, `Logo Not Updated`)
@@ -625,10 +636,16 @@ exports.updateBackground = async (req, res) => {
         return errReturned(res, `Please provide ${key}`);
     
     tokenAddress = tokenAddress.toLowerCase();
+
+    // let profileName = "profile/"+ Math.floor((Math.random() * 10000000000) + 20) + '-' + Math.floor(Date.now() / 1000)+profile['name'].split(".")[0]
+    let backgroundName = "background/"+ Math.floor((Math.random() * 10000000000) + 20) + '-' + Math.floor(Date.now() / 1000)+background['name'].split(".")[0]
+    // let uploadProfile = await uplaodFIles.uploadFileNFT(profileName,process['env']['bucket'],profile['name'].split(".")[1],profile['mimetype'], profile['data']);
+    let uploadBackground = await uplaodFIles.uploadFileNFT(backgroundName,process['env']['bucket'],background['name'].split(".")[1],background['mimetype'], background['data']);
+
     let findCollection = await collectionsModels.findOne({$and:[{tokenAddress},{chain}]});
     if(findCollection) {
       await uploadFiles.deleteCollection(findCollection['bgImage']);
-      await collectionsModels.updateOne({_id:findCollection['_id']}, { bgImage: background[0]['location'] });
+      await collectionsModels.updateOne({_id:findCollection['_id']}, { bgImage: uploadBackground });
       return sendResponse(res, SUCCESS, `Updated Background`)
     }
     return sendResponse(res, BADREQUEST, `Background Not Updated`)

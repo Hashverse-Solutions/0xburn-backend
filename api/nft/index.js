@@ -12,7 +12,8 @@ router.post('/mintNft721', auth.isAuthenticated(), controller.mintNft721);
 router.post('/mintNft1155', auth.isAuthenticated(), controller.mintNft1155);
 router.get('/getSingleNft/:_id', auth.isAuthenticated(), controller.getSingleNft);
 /********************** User Collections ***************/
-router.post('/createCollection',auth.isAuthenticated(),collection.fields([{ name:"background", maxCount:1 },{ name:"profile", maxCount:1 }]),controller.createCollections);
+router.post('/createCollection',auth.isAuthenticated(),controller.createCollections);
+// router.post('/createCollection',auth.isAuthenticated(),collection.fields([{ name:"background", maxCount:1 },{ name:"profile", maxCount:1 }]),controller.createCollections);
 router.get('/getUserCollections',auth.isAuthenticated(),controller.getUserCollections);
 router.get('/getUserNft',auth.isAuthenticated(),controller.getUserNft);
 router.get('/getSingleCollection/:chain/:tokenAddress',controller.getSingleCollection);
@@ -35,8 +36,10 @@ router.get('/getAuctions/:chain',controller.getAuctions);
 router.get('/getAllNfts/:chain',controller.getAllNfts);
 
 /********************** Update Collection ***************/
-router.post('/updateLogo', auth.isAuthenticated(), collection.fields([{ name: "profile", maxCount: 1 }]), controller.updateLogo);
-router.post('/updateBackground', auth.isAuthenticated(), collection.fields([{ name: "background", maxCount: 1 }]), controller.updateBackground);
+// router.post('/updateLogo', auth.isAuthenticated(), collection.fields([{ name: "profile", maxCount: 1 }]), controller.updateLogo);
+// router.post('/updateBackground', auth.isAuthenticated(), collection.fields([{ name: "background", maxCount: 1 }]), controller.updateBackground);
+router.post('/updateLogo', auth.isAuthenticated(),controller.updateLogo);
+router.post('/updateBackground', auth.isAuthenticated(), controller.updateBackground);
 router.post('/updateCollection', auth.isAuthenticated(), controller.updateCollection);
 /********************** User Fav ***************/
 router.post('/addRemoveFavItem', auth.isAuthenticated(), controller.addRemoveFavItem);

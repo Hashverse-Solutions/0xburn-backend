@@ -66,6 +66,25 @@ exports.uploadFile = (fileName, bucketName, fileType, mime, data) => {
     });
 };
 
+exports.uploadFileNFT = (fileName, bucketName, fileType, mime, data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const params = {
+                Bucket: bucketName, // pass your bucket name
+                Key: `${fileName}.${fileType}`, // file will be saved as testBucket/contacts.csv
+                ACL: 'public-read',
+                "ContentType": mime,
+                Body: Buffer.from(data, "binary")
+            };
+            s3.upload(params, function (s3Err, data) {
+                if (s3Err) throw s3Err
+                resolve(data.Location);
+                console.log(`File uploaded successfully at ${data.Location}`)
+            });
+        } catch (e) { reject(e) }
+    });
+};
+
 exports.uploadFiles = (fileName, bucketName, fileType, mime, data) => {
     return new Promise(async (resolve, reject) => {
         try {
