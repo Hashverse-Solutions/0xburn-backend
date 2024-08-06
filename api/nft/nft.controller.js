@@ -538,7 +538,7 @@ exports.transferNft = async (req, res) => {
     let now = Date.now();
     receiverAddress = receiverAddress.toLowerCase();
     let getNFT = await nftModel.findOne({ _id: nftObjId });
-    let getUser = await usersModels.findOne({ $and: [{ publicAddress: receiverAddress },{role}, { chain: getNFT['chain'] }] });
+    let getUser = await usersModels.findOne({ $and: [{ publicAddress: receiverAddress }, { chain: getNFT['chain'] }] });
     if (!getNFT) return sendResponse(res, BADREQUEST, 'NFT Not Found');
     if (getUser) {
       if (getNFT['tokenType'] == "erc721") {
